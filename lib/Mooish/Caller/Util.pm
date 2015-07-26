@@ -139,32 +139,56 @@ sub get_constructor_callers {
 }
 
 1;
-# ABSTRACT: caller()-related utility routines
+# ABSTRACT: Get constructor caller from inside Mo/Moo/Moose/Mouse's BUILD/BUILDARGS
 
 =head1 SYNOPSIS
 
- use Devel::Util::Caller qw(callers);
+ package MyClass;
+ use Moo; # or Mo 'build', or Moose, or Mouse
+ use Mooish::Util::Caller qw(get_constructor_caller get_constructor_callers);
 
- my @callers = callers();
+ sub BUILD { # or BUILDARGS
+     $caller = get_constructor_caller();
+     say $caller->[3]; # subroutine name
+ }
+
+ package main;
+ sub f { MyClass->new }
+ f; # prints 'main::f1'
 
 
 =head1 FUNCTIONS
 
-=head2 callers([ $start=0 [, $with_args] ]) => LIST
+=head2 get_constructor_caller([ $start=0 [, $with_args] ]) => ARRAYREF
 
-A convenience function to return the whole callers stack, produced by calling
-C<caller()> repeatedly from frame C<$start+1> until C<caller()> returns empty.
-Result will be like:
+Like C<[caller($start)]>, but skips Mo/Moo/Moose/Mouse wrappers. Result will be
+like:
+
+ #  0          1           2       3             4          5            6           7             8        9          10
+ [$package1, $filename1, $line1, $subroutine1, $hasargs1, $wantarray1, $evaltext1, $is_require1, $hints1, $bitmask1, $hinthash1],
+
+If C<$with_args> is true, will also return subroutine arguments in the 11th
+element, produced by retrieving C<@DB::args>.
+
+=head2 get_constructor_callers([ $start=0 [, $with_args] ]) => LIST
+
+A convenience function to return the whole callers stack, akin to what is
+produced by collecting result from C<get_constructor_caller($start+1)> up until
+the last frame in caller stack. Result will be like:
 
  (
+     # for frame 0
      #  0          1           2       3             4          5            6           7             8        9          10
      [$package1, $filename1, $line1, $subroutine1, $hasargs1, $wantarray1, $evaltext1, $is_require1, $hints1, $bitmask1, $hinthash1],
-     [$package2, $filename2, $line2, ...],
+
+     # for next frame
+     [$package2, $filename2, $line2, ...]
+
      ...
  )
 
 If C<$with_args> is true, will also return subroutine arguments in the 11th
-element of each frame, produced by retrieving C<@DB::args>.
+element for each frame, produced by retrieving C<@DB::args>.
 
 
 =head1 SEE ALSO
