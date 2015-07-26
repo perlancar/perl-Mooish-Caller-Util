@@ -1,5 +1,13 @@
 Revision history for Mooish-Caller-Util
 
+0.03    2015-07-26 (PERLANCAR)
+
+	- No functional changes.
+
+	- Downgrade TestRequires to Mo/Moo/Moose/Mouse to TestRecommends,
+	  to reduce deps.
+
+
 0.02    2015-07-26 (PERLANCAR)
 
 	- No functional changes.
