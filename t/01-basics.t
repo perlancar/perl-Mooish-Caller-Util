@@ -110,6 +110,8 @@ f3;
 _
 
 subtest Mo => sub {
+    plan skip_all => 'Mo not available' unless eval { require Mo; 1 };
+
     my $eval_err;
     eval fill_template($code_template,
                       {OBJSYS=>'Mo', OBJSYS_ARGS=>' qw(build)',
@@ -131,6 +133,8 @@ subtest Mo => sub {
 };
 
 subtest Moo => sub {
+    plan skip_all => 'Moo not available' unless eval { require Moo; 1 };
+
     my $eval_err;
     eval fill_template($code_template,
                       {OBJSYS=>'Moo', OBJSYS_ARGS=>'',
@@ -170,6 +174,8 @@ subtest Moo => sub {
 };
 
 subtest Moose => sub {
+    plan skip_all => 'Moose not available' unless eval { require Moose; 1 };
+
     my $eval_err;
     eval fill_template($code_template,
                       {OBJSYS=>'Moose', OBJSYS_ARGS=>'',
@@ -209,6 +215,8 @@ subtest Moose => sub {
 };
 
 subtest Mouse => sub {
+    plan skip_all => 'Mouse not available' unless eval { require Mouse; 1 };
+
     my $eval_err;
     eval fill_template($code_template,
                       {OBJSYS=>'Mouse', OBJSYS_ARGS=>'',
