@@ -12,7 +12,6 @@ our @EXPORT_OK = qw(get_constructor_caller
                     get_constructor_callers);
 
 sub _get_constructor_caller_or_callers {
-    use experimental 'smartmatch';
     no strict 'refs';
 
     my $routine = shift;
@@ -61,7 +60,7 @@ sub _get_constructor_caller_or_callers {
                 } elsif ($caller[0] eq 'Class::MOP::Method') {
                     $objsys = 'Moose';
                     next;
-                } elsif ("Mouse::Object" ~~ @{"$subpkg\::ISA"}) {
+                } elsif (grep {$_ eq "Mouse::Object"} @{"$subpkg\::ISA"}) {
                     $objsys = 'Mouse';
                     next;
                 } else {
@@ -75,7 +74,7 @@ sub _get_constructor_caller_or_callers {
                 } elsif ($caller[0] eq 'Moose::Object') {
                     $objsys = 'Moose';
                     next;
-                } elsif ("Mouse::Object" ~~ @{"$subpkg\::ISA"}) {
+                } elsif (grep {$_ eq "Mouse::Object"} @{"$subpkg\::ISA"}) {
                     $objsys = 'Mouse';
                     next;
                 } else {
