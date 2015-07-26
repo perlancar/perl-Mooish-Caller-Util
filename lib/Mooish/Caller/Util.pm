@@ -152,8 +152,9 @@ sub get_constructor_callers {
  }
 
  package main;
- sub f { MyClass->new }
- f; # prints 'main::f1'
+ sub f1 { MyClass->new }
+ sub f2 { f1 }
+ f2; # prints 'main::f1'
 
 
 =head1 FUNCTIONS
