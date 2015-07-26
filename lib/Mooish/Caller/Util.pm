@@ -130,12 +130,12 @@ sub _get_constructor_caller_or_callers {
 
 sub get_constructor_caller {
     unshift @_, "get_constructor_caller";
-    goto \&_get_constructor_caller_or_callers;
+    goto &_get_constructor_caller_or_callers;
 }
 
 sub get_constructor_callers {
     unshift @_, "get_constructor_callers";
-    goto \&_get_constructor_caller_or_callers;
+    goto &_get_constructor_caller_or_callers;
 }
 
 1;
