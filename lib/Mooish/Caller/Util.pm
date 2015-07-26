@@ -1,0 +1,172 @@
+package Mooish::Caller::Util;
+
+# DATE
+# VERSION
+
+use 5.010001;
+use warnings;
+use strict;
+
+use Exporter qw(import);
+our @EXPORT_OK = qw(get_constructor_caller
+                    get_constructor_callers);
+
+sub _get_constructor_caller_or_callers {
+    use experimental 'smartmatch';
+    no strict 'refs';
+
+    my $routine = shift;
+
+    my $start = $_[0] // 0;
+    my $with_args = $_[1];
+
+    my @res;
+
+    my $objsys;
+    my $is_build;
+    my $wrappers_done;
+
+    my $i = 0;
+    my $j = 0;
+    while (1) {
+        $i++;
+        my @caller;
+        if ($with_args) {
+            {
+                package DB;
+                @caller = caller($i);
+                $caller[11] = [@DB::args] if @caller;
+            }
+        } else {
+            @caller = caller($i);
+        }
+        last unless @caller;
+
+        if ($i == 1) {
+            my $subpkg;
+            if ($caller[3] =~ /(.+)::BUILD(ARGS)?\z/) {
+                $subpkg = $1;
+                $is_build = !$2;
+            } else {
+                die "$routine(): Not called directly inside BUILD/BUILDARGS";
+            }
+
+            if ($is_build) {
+                if ($caller[0] eq 'Method::Generate::BuildAll') {
+                    $objsys = 'Moo';
+                    next;
+                } elsif ($caller[0] eq 'Mo::build') {
+                    $objsys = 'Mo';
+                    next;
+                } elsif ($caller[0] eq 'Class::MOP::Method') {
+                    $objsys = 'Moose';
+                    next;
+                } elsif ("Mouse::Object" ~~ @{"$subpkg\::ISA"}) {
+                    $objsys = 'Mouse';
+                    next;
+                } else {
+                    die "$routine(): Unknown object system ".
+                        "(only Mo/Moo/Moose/Mouse supported for BUILD)";
+                }
+            } else { # BUILDARGS
+                if ($caller[0] eq 'Moo::Object') {
+                    $objsys = 'Moo';
+                    next;
+                } elsif ($caller[0] eq 'Moose::Object') {
+                    $objsys = 'Moose';
+                    next;
+                } elsif ("Mouse::Object" ~~ @{"$subpkg\::ISA"}) {
+                    $objsys = 'Mouse';
+                    next;
+                } else {
+                    die "$routine(): Unknown object system ".
+                        "(only Moo/Moose/Mouse supported for BUILDARGS)";
+                }
+            }
+        } else {
+            unless ($wrappers_done) {
+                if ($is_build) {
+                    if ($objsys eq 'Mo') {
+                        next if $caller[3] eq 'Mo::build::__ANON__';
+                        $wrappers_done++;
+                    } elsif ($objsys eq 'Moo') {
+                        next if $caller[0] eq 'Moo::Object' ||
+                            $caller[3] eq 'Moo::Object::new';
+                        $wrappers_done++;
+                    } elsif ($objsys eq 'Moose') {
+                        next if $caller[0] eq 'Moose::Object' ||
+                            $caller[0] eq 'Moose::Meta::Class' ||
+                            $caller[3] eq 'Moose::Object::new';
+                        $wrappers_done++;
+                    } else { # Mouse
+                        $wrappers_done++;
+                    }
+                } else { # BUILDARGS
+                    if ($objsys eq 'Moo') {
+                        next if $caller[3] eq 'Moo::Object::new';
+                        $wrappers_done++;
+                    } elsif ($objsys eq 'Moose') {
+                        next if $caller[3] eq 'Moose::Object::new';
+                        $wrappers_done++;
+                    } else { # Mouse
+                        $wrappers_done++;
+                    }
+                }
+            }
+        }
+
+        $j++;
+        push @res, \@caller;
+        last if $routine eq 'get_constructor_caller' && $j > $start;
+    }
+
+    if ($routine eq 'get_constructor_caller') {
+        return $res[$start];
+    } else {
+        splice(@res, 0, $start);
+        return @res;
+    }
+}
+
+sub get_constructor_caller {
+    unshift @_, "get_constructor_caller";
+    goto \&_get_constructor_caller_or_callers;
+}
+
+sub get_constructor_callers {
+    unshift @_, "get_constructor_callers";
+    goto \&_get_constructor_caller_or_callers;
+}
+
+1;
+# ABSTRACT: caller()-related utility routines
+
+=head1 SYNOPSIS
+
+ use Devel::Util::Caller qw(callers);
+
+ my @callers = callers();
+
+
+=head1 FUNCTIONS
+
+=head2 callers([ $start=0 [, $with_args] ]) => LIST
+
+A convenience function to return the whole callers stack, produced by calling
+C<caller()> repeatedly from frame C<$start+1> until C<caller()> returns empty.
+Result will be like:
+
+ (
+     #  0          1           2       3             4          5            6           7             8        9          10
+     [$package1, $filename1, $line1, $subroutine1, $hasargs1, $wantarray1, $evaltext1, $is_require1, $hints1, $bitmask1, $hinthash1],
+     [$package2, $filename2, $line2, ...],
+     ...
+ )
+
+If C<$with_args> is true, will also return subroutine arguments in the 11th
+element of each frame, produced by retrieving C<@DB::args>.
+
+
+=head1 SEE ALSO
+
+=cut
