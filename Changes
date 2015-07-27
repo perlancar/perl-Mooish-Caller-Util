@@ -1,5 +1,17 @@
 Revision history for Mooish-Caller-Util
 
+0.04    2015-07-27 (PERLANCAR)
+
+	- No functional changes.
+
+	- Make sure we test with Moo >= 2.000002 (which guarantees to call
+	  BUILDARGS).
+
+	- [test] Show Mo/Moo/Moose/Mouse version.
+
+	- [doc] Fix typo in example.
+
+
 0.03    2015-07-26 (PERLANCAR)
 
 	- No functional changes.
