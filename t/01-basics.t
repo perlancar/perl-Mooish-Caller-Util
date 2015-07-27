@@ -134,6 +134,7 @@ subtest Mo => sub {
 
 subtest Moo => sub {
     plan skip_all => 'Moo not available' unless eval { require Moo; diag "Moo::VERSION=$Moo::VERSION"; 1 };
+    plan skip_all => 'Moo version is too old' unless version->parse($Moo::VERSION) >= version->parse("2.000002");
 
     my $eval_err;
     eval fill_template($code_template,
