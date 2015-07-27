@@ -110,7 +110,7 @@ f3;
 _
 
 subtest Mo => sub {
-    plan skip_all => 'Mo not available' unless eval { require Mo; 1 };
+    plan skip_all => 'Mo not available' unless eval { require Mo; diag "Mo::VERSION=$Mo::VERSION"; 1 };
 
     my $eval_err;
     eval fill_template($code_template,
@@ -133,7 +133,7 @@ subtest Mo => sub {
 };
 
 subtest Moo => sub {
-    plan skip_all => 'Moo not available' unless eval { require Moo; 1 };
+    plan skip_all => 'Moo not available' unless eval { require Moo; diag "Moo::VERSION=$Moo::VERSION"; 1 };
 
     my $eval_err;
     eval fill_template($code_template,
@@ -174,7 +174,7 @@ subtest Moo => sub {
 };
 
 subtest Moose => sub {
-    plan skip_all => 'Moose not available' unless eval { require Moose; 1 };
+    plan skip_all => 'Moose not available' unless eval { require Moose; diag "Moose::VERSION=$Moose::VERSION"; 1 };
 
     my $eval_err;
     eval fill_template($code_template,
@@ -215,7 +215,7 @@ subtest Moose => sub {
 };
 
 subtest Mouse => sub {
-    plan skip_all => 'Mouse not available' unless eval { require Mouse; 1 };
+    plan skip_all => 'Mouse not available' unless eval { require Mouse; diag "Mouse::VERSION=$Mouse::VERSION"; 1 };
 
     my $eval_err;
     eval fill_template($code_template,
