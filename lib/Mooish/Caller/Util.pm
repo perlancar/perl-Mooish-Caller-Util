@@ -27,6 +27,7 @@ sub _get_constructor_caller_or_callers {
 
     my $i = 0;
     my $j = 0;
+    my $skips = 0;
     while (1) {
         $i++;
         my @caller;
@@ -98,6 +99,9 @@ sub _get_constructor_caller_or_callers {
                             $caller[3] eq 'Moose::Object::new';
                         $wrappers_done++;
                     } else { # Mouse
+                        if ($] < 5.014) {
+                            next unless $skips++ >= 1;
+                        }
                         $wrappers_done++;
                     }
                 } else { # BUILDARGS
@@ -108,6 +112,9 @@ sub _get_constructor_caller_or_callers {
                         next if $caller[3] eq 'Moose::Object::new';
                         $wrappers_done++;
                     } else { # Mouse
+                        if ($] < 5.014) {
+                            next unless $skips++ >= 1;
+                        }
                         $wrappers_done++;
                     }
                 }
