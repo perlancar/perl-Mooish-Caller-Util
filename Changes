@@ -1,5 +1,11 @@
 Revision history for Mooish-Caller-Util
 
+0.05    2015-07-27 (PERLANCAR)
+
+	- Add workaround for perl < 5.14 (apparently there is an extra eval
+	  frame with Mouse and these older perls) [CT].
+
+
 0.04    2015-07-27 (PERLANCAR)
 
 	- No functional changes.
