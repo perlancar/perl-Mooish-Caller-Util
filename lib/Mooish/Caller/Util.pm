@@ -100,7 +100,7 @@ sub _get_constructor_caller_or_callers {
                         $wrappers_done++;
                     } else { # Mouse
                         if ($] < 5.014) {
-                            next unless $skips++ >= 1;
+                            next if $skips++ < 1 && $caller[3] =~ /eval/;
                         }
                         $wrappers_done++;
                     }
@@ -113,7 +113,7 @@ sub _get_constructor_caller_or_callers {
                         $wrappers_done++;
                     } else { # Mouse
                         if ($] < 5.014) {
-                            next unless $skips++ >= 1;
+                            next if $skips++ < 1 && $caller[3] =~ /eval/;
                         }
                         $wrappers_done++;
                     }
