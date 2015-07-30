@@ -1,5 +1,15 @@
 Revision history for Mooish-Caller-Util
 
+0.06    2015-07-30 (PERLANCAR)
+
+	- Add another detection check for Moo: sometimes Moo uses
+	  Method::Generate::Constructor instead of
+	  Method::Generate::BuildAll.
+
+	- Be safer when skipping frame with Mouse & older perl (make sure
+	  we're skipping eval frame).
+
+
 0.05    2015-07-27 (PERLANCAR)
 
 	- Add workaround for perl < 5.14 (apparently there is an extra eval
