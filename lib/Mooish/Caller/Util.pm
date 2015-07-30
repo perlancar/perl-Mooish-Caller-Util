@@ -52,7 +52,8 @@ sub _get_constructor_caller_or_callers {
             }
 
             if ($is_build) {
-                if ($caller[0] eq 'Method::Generate::BuildAll') {
+                if ($caller[0] eq 'Method::Generate::BuildAll' ||
+                        $caller[0] eq 'Method::Generate::Constructor') {
                     $objsys = 'Moo';
                     next;
                 } elsif ($caller[0] eq 'Mo::build') {
